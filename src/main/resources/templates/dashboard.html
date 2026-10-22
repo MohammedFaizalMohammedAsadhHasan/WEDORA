@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <title>WEDORA | Dashboard</title>
+</head>
+<body>
+
+<h1>Welcome to WEDORA</h1>
+
+<h2>Wedding Business Management Dashboard</h2>
+
+<p>Login successful!</p>
+<p>Spring Boot and Thymeleaf are working.</p>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Sign Out</button>
+</form>
+
+</body>
+</html>
