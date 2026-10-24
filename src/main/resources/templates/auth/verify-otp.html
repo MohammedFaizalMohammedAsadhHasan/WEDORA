@@ -2,9 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Verify OTP | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
+    <div class="login-container">
+        <!-- Left Panel - Branding -->
+        <div class="login-left">
+            <div class="login-brand">
+                <h1>WEDORA</h1>
+                <p class="tagline">Elegant Wedding Management</p>
+            </div>
+            <div class="login-features">
+                <div class="feature">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span>Secure OTP Authentication</span>
+                </div>
+                <div class="feature">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span th:text="${expiryMinutes + ' minutes validity'}">10 minutes validity</span>
+                </div>
+            </div>
+        </div>
 
+        <!-- Right Panel - OTP Form -->
+        <div class="login-right">
+            <div class="login-form-container">
+                <div class="login-header">
+                    <h2>Verify OTP</h2>
+                    <p>Enter the 6-digit code sent to <strong th:text="${email}">your email</strong></p>
+                </div>
+
+                <!-- Alerts -->
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                <div th:if="${info}" class="alert alert-info" th:text="${info}"></div>
+
+                <form th:action="@{/verify-otp}" method="post">
+                    <input type="hidden" name="email" th:value="${email}">
+
+                    <div class="form-group">
+                        <label for="otp" class="form-label">OTP Code</label>
+                        <input type="text"
+                               id="otp"
+                               name="otp"
+                               class="form-control"
+                               placeholder="Enter 6-digit code"
+                               maxlength="6"
+                               pattern="[0-9]{6}"
+                               required
+                               style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Verify OTP</button>
+                </form>
+
+                <div class="login-footer">
+                    <form th:action="@{/resend-otp}" method="post" style="display: inline;">
+                        <button type="submit" class="btn-link">Resend OTP</button>
+                    </form>
+                    <span style="color: var(--color-muted-text);">|</span>
+                    <a th:href="@{/login}" class="btn-link">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
 </body>
-</html>
+</html>

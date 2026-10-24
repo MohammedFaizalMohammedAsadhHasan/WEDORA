@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Finance Overview | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('finance')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header('Finance', 'Finance')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title">Finance Overview</h1>
+                </div>
+
+                <!-- Alerts -->
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                <!-- Finance Summary Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Total Bookings</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-success);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.totalBookings != null ? wedding.totalBookings : 0})}">LKR 0.00</div>
+                    </div>
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Total Expenses</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-error);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.totalExpenses != null ? wedding.totalExpenses : 0})}">LKR 0.00</div>
+                    </div>
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Remaining Budget</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-deep-burgundy);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.remainingBudget != null ? wedding.remainingBudget : 0})}">LKR 0.00</div>
+                    </div>
+                </div>
+
+                <!-- Wedding Finance Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Wedding Finances</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Wedding</th>
+                                    <th>Date</th>
+                                    <th>Total Bookings</th>
+                                    <th>Total Expenses</th>
+                                    <th>Remaining Budget</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(weddings)}">
+                                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                                        <div class="empty-state">
+                                            <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <h4 class="empty-state-title">No Wedding Finances</h4>
+                                            <p class="empty-state-text">Create weddings and bookings to see finance data</p>
+                                            <a th:href="@{/weddings/new}" class="btn btn-primary btn-sm">Create Wedding</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:each="wedding : ${weddings}">
+                                    <td>
+                                        <div style="font-weight: 500;">
+                                            <span th:text="${wedding.brideName}">Bride</span>
+                                            <span style="color: var(--color-muted-text);">&</span>
+                                            <span th:text="${wedding.groomName}">Groom</span>
+                                        </div>
+                                    </td>
+                                    <td th:text="${#temporals.format(wedding.weddingDate, 'MMM dd, yyyy')}">Jan 01, 2025</td>
+                                    <td style="color: var(--color-success); font-weight: 500;" th:text="${wedding.totalBookings != null ? 'LKR ' + wedding.totalBookings : 'LKR 0.00'}">LKR 0.00</td>
+                                    <td style="color: var(--color-error); font-weight: 500;" th:text="${wedding.totalExpenses != null ? 'LKR ' + wedding.totalExpenses : 'LKR 0.00'}">LKR 0.00</td>
+                                    <td style="color: var(--color-deep-burgundy); font-weight: 500;" th:text="${wedding.remainingBudget != null ? 'LKR ' + wedding.remainingBudget : 'LKR 0.00'}">LKR 0.00</td>
+                                    <td>
+                                        <a th:href="@{/finance/wedding/{id}(id=${wedding.id})}" class="btn btn-sm btn-primary">View Details</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

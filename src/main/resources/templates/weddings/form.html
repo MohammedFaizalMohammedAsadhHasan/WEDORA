@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${isEdit ? 'Edit Wedding | WEDORA' : 'New Wedding | WEDORA'}">Wedding | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('weddings')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header(isEdit ? 'Edit Wedding' : 'New Wedding', 'Weddings')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title" th:text="${isEdit ? 'Edit Wedding' : 'New Wedding'}">New Wedding</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/weddings}" class="btn btn-outline">Back to List</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 800px;">
+                    <div class="card-body">
+                        <form th:action="${isEdit ? @{/weddings/edit/{id}(id=${wedding.id})} : @{/weddings/new}}"
+                              method="post"
+                              th:object="${wedding}">
+
+                            <!-- Customer Selection -->
+                            <div class="form-group">
+                                <label for="customerId" class="form-label">Customer *</label>
+                                <select id="customerId" th:field="*{customerId}" class="form-control" required>
+                                    <option value="">Select customer</option>
+                                    <option th:each="customer : ${customers}"
+                                            th:value="${customer.id}"
+                                            th:text="${customer.fullName}"
+                                            th:selected="${wedding.customerId == customer.id}">
+                                        Customer Name
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('customerId')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{customerId}">Customer is required</span>
+                                </div>
+                                <div class="form-text" th:if="${customers.isEmpty()}">
+                                    <a th:href="@{/customers/new}" style="color: var(--color-deep-burgundy);">Add a customer first</a>
+                                </div>
+                            </div>
+
+                            <!-- Bride Name -->
+                            <div class="form-group">
+                                <label for="brideName" class="form-label">Bride Name *</label>
+                                <input type="text"
+                                       id="brideName"
+                                       th:field="*{brideName}"
+                                       class="form-control"
+                                       placeholder="Enter bride's name"
+                                       required>
+                                <div th:if="${#fields.hasErrors('brideName')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{brideName}">Bride name is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Groom Name -->
+                            <div class="form-group">
+                                <label for="groomName" class="form-label">Groom Name *</label>
+                                <input type="text"
+                                       id="groomName"
+                                       th:field="*{groomName}"
+                                       class="form-control"
+                                       placeholder="Enter groom's name"
+                                       required>
+                                <div th:if="${#fields.hasErrors('groomName')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{groomName}">Groom name is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Wedding Date -->
+                            <div class="form-group">
+                                <label for="weddingDate" class="form-label">Wedding Date *</label>
+                                <input type="date"
+                                       id="weddingDate"
+                                       th:field="*{weddingDate}"
+                                       class="form-control"
+                                       required>
+                                <div th:if="${#fields.hasErrors('weddingDate')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{weddingDate}">Wedding date is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Venue -->
+                            <div class="form-group">
+                                <label for="venue" class="form-label">Venue</label>
+                                <input type="text"
+                                       id="venue"
+                                       th:field="*{venue}"
+                                       class="form-control"
+                                       placeholder="Enter wedding venue">
+                            </div>
+
+                            <!-- Estimated Guests -->
+                            <div class="form-group">
+                                <label for="estimatedGuests" class="form-label">Estimated Guests</label>
+                                <input type="number"
+                                       id="estimatedGuests"
+                                       th:field="*{estimatedGuests}"
+                                       class="form-control"
+                                       placeholder="Enter estimated number of guests"
+                                       min="0">
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" th:field="*{status}" class="form-control">
+                                    <option value="PLANNING" th:selected="${wedding.status == null || wedding.status == T(com.wedora.model.Wedding.WeddingStatus).PLANNING}">Planning</option>
+                                    <option value="CONFIRMED" th:selected="${wedding.status == T(com.wedora.model.Wedding.WeddingStatus).CONFIRMED}">Confirmed</option>
+                                    <option value="IN_PROGRESS" th:selected="${wedding.status == T(com.wedora.model.Wedding.WeddingStatus).IN_PROGRESS}">In Progress</option>
+                                    <option value="COMPLETED" th:selected="${wedding.status == T(com.wedora.model.Wedding.WeddingStatus).COMPLETED}">Completed</option>
+                                    <option value="CANCELLED" th:selected="${wedding.status == T(com.wedora.model.Wedding.WeddingStatus).CANCELLED}">Cancelled</option>
+                                </select>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea id="notes"
+                                          th:field="*{notes}"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Additional notes about the wedding..."></textarea>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span th:text="${isEdit ? 'Update Wedding' : 'Create Wedding'}">Create Wedding</span>
+                                </button>
+                                <a th:href="@{/weddings}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

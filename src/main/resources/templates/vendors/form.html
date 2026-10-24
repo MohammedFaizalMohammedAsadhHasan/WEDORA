@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${isEdit ? 'Edit Vendor | WEDORA' : 'Add Vendor | WEDORA'}">Vendor | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('vendors')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header(isEdit ? 'Edit Vendor' : 'Add Vendor', 'Vendors')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title" th:text="${isEdit ? 'Edit Vendor' : 'Add Vendor'}">Add Vendor</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/vendors}" class="btn btn-outline">Back to List</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 800px;">
+                    <div class="card-body">
+                        <form th:action="${isEdit ? @{/vendors/edit/{id}(id=${vendor.id})} : @{/vendors/new}}"
+                              method="post"
+                              th:object="${vendor}">
+
+                            <!-- Vendor Name -->
+                            <div class="form-group">
+                                <label for="name" class="form-label">Vendor Name *</label>
+                                <input type="text"
+                                       id="name"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       placeholder="Enter vendor name"
+                                       required>
+                                <div th:if="${#fields.hasErrors('name')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{name}">Name is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <label for="category" class="form-label">Category *</label>
+                                <select id="category" th:field="*{category}" class="form-control" required>
+                                    <option value="">Select category</option>
+                                    <option value="Catering">Catering</option>
+                                    <option value="Photography">Photography</option>
+                                    <option value="Videography">Videography</option>
+                                    <option value="Decoration">Decoration</option>
+                                    <option value="Venue">Venue</option>
+                                    <option value="Bridal Makeup">Bridal Makeup</option>
+                                    <option value="Music">Music</option>
+                                    <option value="Transportation">Transportation</option>
+                                    <option value="Wedding Attire">Wedding Attire</option>
+                                    <option value="Event Coordination">Event Coordination</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('category')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{category}">Category is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Contact Person -->
+                            <div class="form-group">
+                                <label for="contactPerson" class="form-label">Contact Person</label>
+                                <input type="text"
+                                       id="contactPerson"
+                                       th:field="*{contactPerson}"
+                                       class="form-control"
+                                       placeholder="Name of contact person">
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email"
+                                       id="email"
+                                       th:field="*{email}"
+                                       class="form-control"
+                                       placeholder="vendor@example.com">
+                                <div th:if="${#fields.hasErrors('email')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{email}">Invalid email format</span>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel"
+                                       id="phone"
+                                       th:field="*{phone}"
+                                       class="form-control"
+                                       placeholder="+94 77 123 4567">
+                                <div th:if="${#fields.hasErrors('phone')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{phone}">Invalid phone format</span>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea id="address"
+                                          th:field="*{address}"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Enter vendor's address"></textarea>
+                            </div>
+
+                            <!-- Service Description -->
+                            <div class="form-group">
+                                <label for="serviceDescription" class="form-label">Service Description</label>
+                                <textarea id="serviceDescription"
+                                          th:field="*{serviceDescription}"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Describe the services provided..."></textarea>
+                            </div>
+
+                            <!-- Pricing -->
+                            <div class="form-group">
+                                <label for="pricing" class="form-label">Pricing Information</label>
+                                <textarea id="pricing"
+                                          th:field="*{pricing}"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Pricing details, packages, etc..."></textarea>
+                            </div>
+
+                            <!-- Status (Edit mode only) -->
+                            <div class="form-group" th:if="${isEdit}">
+                                <label class="form-check">
+                                    <input type="checkbox"
+                                           th:field="*{active}"
+                                           class="form-check-input">
+                                    <span class="form-check-label">Active Vendor</span>
+                                </label>
+                                <div class="form-text">Uncheck to archive this vendor</div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span th:text="${isEdit ? 'Update Vendor' : 'Create Vendor'}">Create Vendor</span>
+                                </button>
+                                <a th:href="@{/vendors}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

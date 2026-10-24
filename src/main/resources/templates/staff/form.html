@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${staff.id != null ? 'Edit Staff | WEDORA' : 'Add Staff | WEDORA'}">Staff | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('staff')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header(staff.id != null ? 'Edit Staff' : 'Add Staff', 'Staff')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title" th:text="${staff.id != null ? 'Edit Staff' : 'Add Staff'}">Add Staff</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/staff}" class="btn btn-outline">Back to List</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 600px;">
+                    <div class="card-body">
+                        <form th:action="${staff.id != null ? @{/staff/edit/{id}(id=${staff.id})} : @{/staff/new}}"
+                              method="post"
+                              th:object="${staff}">
+
+                            <!-- First Name -->
+                            <div class="form-group">
+                                <label for="firstName" class="form-label">First Name *</label>
+                                <input type="text"
+                                       id="firstName"
+                                       th:field="*{firstName}"
+                                       class="form-control"
+                                       placeholder="Enter first name"
+                                       required>
+                                <div th:if="${#fields.hasErrors('firstName')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{firstName}">First name is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label for="lastName" class="form-label">Last Name *</label>
+                                <input type="text"
+                                       id="lastName"
+                                       th:field="*{lastName}"
+                                       class="form-control"
+                                       placeholder="Enter last name"
+                                       required>
+                                <div th:if="${#fields.hasErrors('lastName')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{lastName}">Last name is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email"
+                                       id="email"
+                                       th:field="*{email}"
+                                       class="form-control"
+                                       placeholder="email@example.com">
+                                <div th:if="${#fields.hasErrors('email')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{email}">Invalid email format</span>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel"
+                                       id="phone"
+                                       th:field="*{phone}"
+                                       class="form-control"
+                                       placeholder="+94 77 123 4567">
+                                <div th:if="${#fields.hasErrors('phone')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{phone}">Invalid phone format</span>
+                                </div>
+                            </div>
+
+                            <!-- Position -->
+                            <div class="form-group">
+                                <label for="position" class="form-label">Position</label>
+                                <input type="text"
+                                       id="position"
+                                       th:field="*{position}"
+                                       class="form-control"
+                                       placeholder="e.g., Event Coordinator">
+                            </div>
+
+                            <!-- Department -->
+                            <div class="form-group">
+                                <label for="department" class="form-label">Department</label>
+                                <select id="department" th:field="*{department}" class="form-control">
+                                    <option value="">Select department</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Operations">Operations</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Creative">Creative</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Hire Date -->
+                            <div class="form-group">
+                                <label for="hireDate" class="form-label">Hire Date</label>
+                                <input type="date"
+                                       id="hireDate"
+                                       th:field="*{hireDate}"
+                                       class="form-control">
+                            </div>
+
+                            <!-- Salary -->
+                            <div class="form-group">
+                                <label for="salary" class="form-label">Salary (LKR)</label>
+                                <input type="number"
+                                       id="salary"
+                                       th:field="*{salary}"
+                                       class="form-control"
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0">
+                            </div>
+
+                            <!-- Status (Edit mode only) -->
+                            <div class="form-group" th:if="${staff.id != null}">
+                                <label class="form-check">
+                                    <input type="checkbox"
+                                           th:field="*{active}"
+                                           class="form-check-input">
+                                    <span class="form-check-label">Active Staff Member</span>
+                                </label>
+                                <div class="form-text">Uncheck to archive this staff member</div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span th:text="${staff.id != null ? 'Update Staff' : 'Add Staff'}">Add Staff</span>
+                                </button>
+                                <a th:href="@{/staff}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

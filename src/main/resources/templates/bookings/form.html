@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${isEdit ? 'Edit Booking | WEDORA' : 'New Booking | WEDORA'}">Booking | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('bookings')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header(isEdit ? 'Edit Booking' : 'New Booking', 'Bookings')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title" th:text="${isEdit ? 'Edit Booking' : 'New Booking'}">New Booking</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/bookings}" class="btn btn-outline">Back to List</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 800px;">
+                    <div class="card-body">
+                        <form th:action="${isEdit ? @{/bookings/edit/{id}(id=${booking.id})} : @{/bookings/new}}"
+                              method="post"
+                              th:object="${booking}">
+
+                            <!-- Wedding Selection -->
+                            <div class="form-group">
+                                <label for="weddingId" class="form-label">Wedding *</label>
+                                <select id="weddingId" th:field="*{weddingId}" class="form-control" required>
+                                    <option value="">Select wedding</option>
+                                    <option th:each="wedding : ${weddings}"
+                                            th:value="${wedding.id}"
+                                            th:text="${wedding.brideName + ' & ' + wedding.groomName + ' - ' + #temporals.format(wedding.weddingDate, 'MMM dd, yyyy')}"
+                                            th:selected="${booking.weddingId == wedding.id}">
+                                        Wedding
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('weddingId')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{weddingId}">Wedding is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Vendor Selection -->
+                            <div class="form-group">
+                                <label for="vendorId" class="form-label">Vendor *</label>
+                                <select id="vendorId" th:field="*{vendorId}" class="form-control" required>
+                                    <option value="">Select vendor</option>
+                                    <option th:each="vendor : ${vendors}"
+                                            th:value="${vendor.id}"
+                                            th:text="${vendor.name + ' - ' + vendor.category}"
+                                            th:selected="${booking.vendorId == vendor.id}">
+                                        Vendor
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('vendorId')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{vendorId}">Vendor is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Booking Date & Time -->
+                            <div class="form-group">
+                                <label for="bookingDateTime" class="form-label">Booking Date & Time *</label>
+                                <input type="datetime-local"
+                                       id="bookingDateTime"
+                                       th:field="*{bookingDateTime}"
+                                       class="form-control"
+                                       required>
+                                <div th:if="${#fields.hasErrors('bookingDateTime')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{bookingDateTime}">Date/time is required</span>
+                                </div>
+                                <div class="form-text">Vendor will be checked for conflicts during this time</div>
+                            </div>
+
+                            <!-- Package Name -->
+                            <div class="form-group">
+                                <label for="packageName" class="form-label">Package Name</label>
+                                <input type="text"
+                                       id="packageName"
+                                       th:field="*{packageName}"
+                                       class="form-control"
+                                       placeholder="Enter package name">
+                            </div>
+
+                            <!-- Price -->
+                            <div class="form-group">
+                                <label for="price" class="form-label">Price (LKR)</label>
+                                <input type="number"
+                                       id="price"
+                                       th:field="*{price}"
+                                       class="form-control"
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0">
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" th:field="*{status}" class="form-control">
+                                    <option value="PENDING" th:selected="${booking.status == null || booking.status == T(com.wedora.model.Booking.BookingStatus).PENDING}">Pending</option>
+                                    <option value="CONFIRMED" th:selected="${booking.status == T(com.wedora.model.Booking.BookingStatus).CONFIRMED}">Confirmed</option>
+                                    <option value="COMPLETED" th:selected="${booking.status == T(com.wedora.model.Booking.BookingStatus).COMPLETED}">Completed</option>
+                                    <option value="CANCELLED" th:selected="${booking.status == T(com.wedora.model.Booking.BookingStatus).CANCELLED}">Cancelled</option>
+                                </select>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea id="notes"
+                                          th:field="*{notes}"
+                                          class="form-control"
+                                          rows="4"
+                                          placeholder="Additional notes about the booking..."></textarea>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span th:text="${isEdit ? 'Update Booking' : 'Create Booking'}">Create Booking</span>
+                                </button>
+                                <a th:href="@{/bookings}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Expense | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('finance')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header('Add Expense', 'Finance')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title">Add Expense</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/finance/wedding/{id}(id=${weddingId})}" class="btn btn-outline">Back to Wedding Finance</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 600px;">
+                    <div class="card-body">
+                        <form th:action="@{/finance/expense/new}" method="post" th:object="${expense}">
+                            <input type="hidden" th:field="*{weddingId}" th:value="${weddingId}">
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description *</label>
+                                <input type="text"
+                                       id="description"
+                                       th:field="*{description}"
+                                       class="form-control"
+                                       placeholder="Enter expense description"
+                                       required>
+                                <div th:if="${#fields.hasErrors('description')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{description}">Description is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Amount -->
+                            <div class="form-group">
+                                <label for="amount" class="form-label">Amount (LKR) *</label>
+                                <input type="number"
+                                       id="amount"
+                                       th:field="*{amount}"
+                                       class="form-control"
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0.01"
+                                       required>
+                                <div th:if="${#fields.hasErrors('amount')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{amount}">Amount is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Expense Date -->
+                            <div class="form-group">
+                                <label for="expenseDate" class="form-label">Expense Date *</label>
+                                <input type="date"
+                                       id="expenseDate"
+                                       th:field="*{expenseDate}"
+                                       class="form-control"
+                                       required>
+                                <div th:if="${#fields.hasErrors('expenseDate')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{expenseDate}">Date is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="form-group">
+                                <label for="category" class="form-label">Category</label>
+                                <select id="category" th:field="*{category}" class="form-control">
+                                    <option value="">Select category</option>
+                                    <option value="Venue">Venue</option>
+                                    <option value="Catering">Catering</option>
+                                    <option value="Decoration">Decoration</option>
+                                    <option value="Photography">Photography</option>
+                                    <option value="Videography">Videography</option>
+                                    <option value="Music">Music</option>
+                                    <option value="Attire">Attire</option>
+                                    <option value="Transportation">Transportation</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea id="notes"
+                                          th:field="*{notes}"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Additional notes..."></textarea>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Add Expense
+                                </button>
+                                <a th:href="@{/finance/wedding/{id}(id=${weddingId})}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

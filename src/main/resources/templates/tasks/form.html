@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:with="isDashboard=true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="${task.id != null ? 'Edit Task | WEDORA' : 'Add Task | WEDORA'}">Task | WEDORA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar('tasks')}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header(task.id != null ? 'Edit Task' : 'Add Task', 'Tasks')}"></div>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title" th:text="${task.id != null ? 'Edit Task' : 'Add Task'}">Add Task</h1>
+                    <div class="page-actions">
+                        <a th:href="@{/tasks}" class="btn btn-outline">Back to List</a>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card" style="max-width: 600px;">
+                    <div class="card-body">
+                        <form th:action="${task.id != null ? @{/tasks/edit/{id}(id=${task.id})} : @{/tasks/new}}"
+                              method="post"
+                              th:object="${task}">
+
+                            <!-- Wedding Selection -->
+                            <div class="form-group">
+                                <label for="weddingId" class="form-label">Wedding *</label>
+                                <select id="weddingId" th:field="*{weddingId}" class="form-control" required>
+                                    <option value="">Select wedding</option>
+                                    <option th:each="wedding : ${weddings}"
+                                            th:value="${wedding.id}"
+                                            th:text="${wedding.brideName + ' & ' + wedding.groomName + ' - ' + #temporals.format(wedding.weddingDate, 'MMM dd, yyyy')}"
+                                            th:selected="${task.weddingId == wedding.id}">
+                                        Wedding
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('weddingId')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{weddingId}">Wedding is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Title -->
+                            <div class="form-group">
+                                <label for="title" class="form-label">Title *</label>
+                                <input type="text"
+                                       id="title"
+                                       th:field="*{title}"
+                                       class="form-control"
+                                       placeholder="Enter task title"
+                                       required>
+                                <div th:if="${#fields.hasErrors('title')}" class="form-text" style="color: var(--color-error);">
+                                    <span th:errors="*{title}">Title is required</span>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description"
+                                          th:field="*{description}"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Enter task description..."></textarea>
+                            </div>
+
+                            <!-- Due Date -->
+                            <div class="form-group">
+                                <label for="dueDate" class="form-label">Due Date</label>
+                                <input type="date"
+                                       id="dueDate"
+                                       th:field="*{dueDate}"
+                                       class="form-control">
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="form-group">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select id="priority" th:field="*{priority}" class="form-control">
+                                    <option value="LOW" th:selected="${task.priority == T(com.wedora.model.Task.TaskPriority).LOW}">Low</option>
+                                    <option value="MEDIUM" th:selected="${task.priority == null || task.priority == T(com.wedora.model.Task.TaskPriority).MEDIUM}">Medium</option>
+                                    <option value="HIGH" th:selected="${task.priority == T(com.wedora.model.Task.TaskPriority).HIGH}">High</option>
+                                    <option value="URGENT" th:selected="${task.priority == T(com.wedora.model.Task.TaskPriority).URGENT}">Urgent</option>
+                                </select>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" th:field="*{status}" class="form-control">
+                                    <option value="TODO" th:selected="${task.status == null || task.status == T(com.wedora.model.Task.TaskStatus).TODO}">To Do</option>
+                                    <option value="IN_PROGRESS" th:selected="${task.status == T(com.wedora.model.Task.TaskStatus).IN_PROGRESS}">In Progress</option>
+                                    <option value="COMPLETED" th:selected="${task.status == T(com.wedora.model.Task.TaskStatus).COMPLETED}">Completed</option>
+                                    <option value="CANCELLED" th:selected="${task.status == T(com.wedora.model.Task.TaskStatus).CANCELLED}">Cancelled</option>
+                                </select>
+                            </div>
+
+                            <!-- Assigned To -->
+                            <div class="form-group">
+                                <label for="assignedTo" class="form-label">Assigned To</label>
+                                <input type="text"
+                                       id="assignedTo"
+                                       th:field="*{assignedTo}"
+                                       class="form-control"
+                                       placeholder="Enter assignee name">
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span th:text="${task.id != null ? 'Update Task' : 'Create Task'}">Create Task</span>
+                                </button>
+                                <a th:href="@{/tasks}" class="btn btn-outline">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
