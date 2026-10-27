@@ -36,15 +36,23 @@ public class FileStorageUtil {
         if (!Files.exists(filePath)) {
             return List.of();
         }
-        return Files.readAllLines(filePath, StandardCharsets.UTF_8);
+        try {
+            return Files.readAllLines(filePath, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return List.of();
+        }
     }
 
     /**
      * Writes lines to a file, overwriting existing content.
      */
     public static void writeLines(String filename, List<String> lines) throws IOException {
-        Path filePath = getDataDirectory().resolve(filename);
-        Files.write(filePath, lines, StandardCharsets.UTF_8);
+        try {
+            Path filePath = getDataDirectory().resolve(filename);
+            Files.write(filePath, lines, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IOException("Failed to write file " + filename + ": " + e.getMessage(), e);
+        }
     }
 
     /**

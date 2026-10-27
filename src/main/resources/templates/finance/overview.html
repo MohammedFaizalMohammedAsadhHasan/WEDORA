@@ -41,15 +41,15 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                     <div class="card" style="padding: 1.5rem;">
                         <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Total Bookings</div>
-                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-success);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.totalBookings != null ? wedding.totalBookings : 0})}">LKR 0.00</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-success);" th:text="${totalBookingsSum != null ? 'LKR ' + totalBookingsSum : 'LKR 0.00'}">LKR 0.00</div>
                     </div>
                     <div class="card" style="padding: 1.5rem;">
                         <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Total Expenses</div>
-                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-error);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.totalExpenses != null ? wedding.totalExpenses : 0})}">LKR 0.00</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-error);" th:text="${totalExpensesSum != null ? 'LKR ' + totalExpensesSum : 'LKR 0.00'}">LKR 0.00</div>
                     </div>
                     <div class="card" style="padding: 1.5rem;">
                         <div style="font-size: 0.875rem; color: var(--color-muted-text); margin-bottom: 0.5rem;">Remaining Budget</div>
-                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-deep-burgundy);" th:text="${#lists.isEmpty(weddings) ? 'LKR 0.00' : 'LKR ' + #lists.sum(weddings, ${wedding -> wedding.remainingBudget != null ? wedding.remainingBudget : 0})}">LKR 0.00</div>
+                        <div style="font-size: 2rem; font-weight: 600; color: var(--color-deep-burgundy);" th:text="${remainingBudgetSum != null ? 'LKR ' + remainingBudgetSum : 'LKR 0.00'}">LKR 0.00</div>
                     </div>
                 </div>
 

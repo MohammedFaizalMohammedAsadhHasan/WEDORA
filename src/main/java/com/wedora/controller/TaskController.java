@@ -31,20 +31,30 @@ public class TaskController {
     }
 
     @GetMapping
-    public String listTasks(Model model) throws IOException {
-        List<TaskDTO> tasks = taskService.getAllTasks();
-        List<TaskDTO> overdueTasks = taskService.getOverdueTasks();
-        
-        model.addAttribute("tasks", tasks);
-        model.addAttribute("overdueTasks", overdueTasks);
-        return "tasks/list";
+    public String listTasks(Model model) {
+        try {
+            List<TaskDTO> tasks = taskService.getAllTasks();
+            List<TaskDTO> overdueTasks = taskService.getOverdueTasks();
+            
+            model.addAttribute("tasks", tasks);
+            model.addAttribute("overdueTasks", overdueTasks);
+            return "tasks/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load task data: " + e.getMessage());
+            return "error";
+        }
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) throws IOException {
-        model.addAttribute("task", new TaskDTO());
-        model.addAttribute("weddings", weddingService.getAllWeddings());
-        return "tasks/form";
+    public String showCreateForm(Model model) {
+        try {
+            model.addAttribute("task", new TaskDTO());
+            model.addAttribute("weddings", weddingService.getAllWeddings());
+            return "tasks/form";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load form: " + e.getMessage());
+            return "error";
+        }
     }
 
     @PostMapping("/new")

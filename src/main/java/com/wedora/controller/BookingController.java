@@ -37,24 +37,34 @@ public class BookingController {
      * Displays list of all bookings.
      */
     @GetMapping
-    public String listBookings(Model model) throws IOException {
-        List<BookingDTO> bookings = bookingService.getAllBookings();
-        model.addAttribute("bookings", bookings);
-        model.addAttribute("totalBookings", bookingService.getBookingCount());
-        model.addAttribute("activeBookings", bookingService.getActiveBookingCount());
-        return "bookings/list";
+    public String listBookings(Model model) {
+        try {
+            List<BookingDTO> bookings = bookingService.getAllBookings();
+            model.addAttribute("bookings", bookings);
+            model.addAttribute("totalBookings", bookingService.getBookingCount());
+            model.addAttribute("activeBookings", bookingService.getActiveBookingCount());
+            return "bookings/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load booking data: " + e.getMessage());
+            return "error";
+        }
     }
 
     /**
      * Displays form to create a new booking.
      */
     @GetMapping("/new")
-    public String showCreateForm(Model model) throws IOException {
-        model.addAttribute("booking", new BookingDTO());
-        model.addAttribute("weddings", weddingService.getAllWeddings());
-        model.addAttribute("vendors", vendorService.getActiveVendors());
-        model.addAttribute("isEdit", false);
-        return "bookings/form";
+    public String showCreateForm(Model model) {
+        try {
+            model.addAttribute("booking", new BookingDTO());
+            model.addAttribute("weddings", weddingService.getAllWeddings());
+            model.addAttribute("vendors", vendorService.getActiveVendors());
+            model.addAttribute("isEdit", false);
+            return "bookings/form";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load form: " + e.getMessage());
+            return "error";
+        }
     }
 
     /**

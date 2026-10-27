@@ -34,27 +34,32 @@ public class VendorController {
     public String listVendors(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
-            Model model) throws IOException {
+            Model model) {
 
-        List<VendorDTO> vendors;
+        try {
+            List<VendorDTO> vendors;
 
-        if (search != null && !search.trim().isEmpty()) {
-            vendors = vendorService.searchByName(search);
-            model.addAttribute("searchMessage", "Search results for: " + search);
-            model.addAttribute("search", search);
-        } else if (category != null && !category.isEmpty()) {
-            vendors = vendorService.getVendorsByCategory(category);
-            model.addAttribute("searchMessage", "Vendors in category: " + category);
-            model.addAttribute("category", category);
-        } else {
-            vendors = vendorService.getActiveVendors();
+            if (search != null && !search.trim().isEmpty()) {
+                vendors = vendorService.searchByName(search);
+                model.addAttribute("searchMessage", "Search results for: " + search);
+                model.addAttribute("search", search);
+            } else if (category != null && !category.isEmpty()) {
+                vendors = vendorService.getVendorsByCategory(category);
+                model.addAttribute("searchMessage", "Vendors in category: " + category);
+                model.addAttribute("category", category);
+            } else {
+                vendors = vendorService.getActiveVendors();
+            }
+
+            model.addAttribute("vendors", vendors);
+            model.addAttribute("totalVendors", vendorService.getVendorCount());
+            model.addAttribute("activeVendors", vendorService.getActiveVendorCount());
+
+            return "vendors/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load vendor data: " + e.getMessage());
+            return "error";
         }
-
-        model.addAttribute("vendors", vendors);
-        model.addAttribute("totalVendors", vendorService.getVendorCount());
-        model.addAttribute("activeVendors", vendorService.getActiveVendorCount());
-
-        return "vendors/list";
     }
 
     /**
@@ -62,9 +67,14 @@ public class VendorController {
      */
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("vendor", new VendorDTO());
-        model.addAttribute("isEdit", false);
-        return "vendors/form";
+        try {
+            model.addAttribute("vendor", new VendorDTO());
+            model.addAttribute("isEdit", false);
+            return "vendors/form";
+        } catch (Exception e) {
+            model.addAttribute("error", "Unable to load form: " + e.getMessage());
+            return "error";
+        }
     }
 
     /**

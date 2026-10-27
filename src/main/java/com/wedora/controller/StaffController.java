@@ -28,10 +28,15 @@ public class StaffController {
     }
 
     @GetMapping
-    public String listStaff(Model model) throws IOException {
-        List<StaffDTO> staffList = staffService.getAllStaff();
-        model.addAttribute("staffList", staffList);
-        return "staff/list";
+    public String listStaff(Model model) {
+        try {
+            List<StaffDTO> staffList = staffService.getAllStaff();
+            model.addAttribute("staffList", staffList);
+            return "staff/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load staff data: " + e.getMessage());
+            return "error";
+        }
     }
 
     @GetMapping("/new")

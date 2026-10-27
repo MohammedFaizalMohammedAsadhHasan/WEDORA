@@ -36,34 +36,44 @@ public class WeddingController {
     @GetMapping
     public String listWeddings(
             @RequestParam(required = false) String search,
-            Model model) throws IOException {
+            Model model) {
 
-        List<WeddingDTO> weddings;
+        try {
+            List<WeddingDTO> weddings;
 
-        if (search != null && !search.trim().isEmpty()) {
-            weddings = weddingService.searchByName(search);
-            model.addAttribute("searchMessage", "Search results for: " + search);
-            model.addAttribute("search", search);
-        } else {
-            weddings = weddingService.getAllWeddings();
+            if (search != null && !search.trim().isEmpty()) {
+                weddings = weddingService.searchByName(search);
+                model.addAttribute("searchMessage", "Search results for: " + search);
+                model.addAttribute("search", search);
+            } else {
+                weddings = weddingService.getAllWeddings();
+            }
+
+            model.addAttribute("weddings", weddings);
+            model.addAttribute("totalWeddings", weddingService.getWeddingCount());
+            model.addAttribute("upcomingWeddings", weddingService.getUpcomingWeddingCount());
+
+            return "weddings/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load wedding data: " + e.getMessage());
+            return "error";
         }
-
-        model.addAttribute("weddings", weddings);
-        model.addAttribute("totalWeddings", weddingService.getWeddingCount());
-        model.addAttribute("upcomingWeddings", weddingService.getUpcomingWeddingCount());
-
-        return "weddings/list";
     }
 
     /**
      * Displays form to create a new wedding.
      */
     @GetMapping("/new")
-    public String showCreateForm(Model model) throws IOException {
-        model.addAttribute("wedding", new WeddingDTO());
-        model.addAttribute("customers", customerService.getActiveCustomers());
-        model.addAttribute("isEdit", false);
-        return "weddings/form";
+    public String showCreateForm(Model model) {
+        try {
+            model.addAttribute("wedding", new WeddingDTO());
+            model.addAttribute("customers", customerService.getActiveCustomers());
+            model.addAttribute("isEdit", false);
+            return "weddings/form";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load form: " + e.getMessage());
+            return "error";
+        }
     }
 
     /**

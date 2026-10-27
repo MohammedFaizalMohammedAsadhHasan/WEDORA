@@ -35,29 +35,34 @@ public class CustomerController {
     public String listCustomers(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String searchType,
-            Model model) throws IOException {
+            Model model) {
 
-        List<CustomerDTO> customers;
+        try {
+            List<CustomerDTO> customers;
 
-        if (search != null && !search.trim().isEmpty()) {
-            if ("contact".equals(searchType)) {
-                customers = customerService.searchByContact(search);
-                model.addAttribute("searchMessage", "Search results for contact: " + search);
+            if (search != null && !search.trim().isEmpty()) {
+                if ("contact".equals(searchType)) {
+                    customers = customerService.searchByContact(search);
+                    model.addAttribute("searchMessage", "Search results for contact: " + search);
+                } else {
+                    customers = customerService.searchByName(search);
+                    model.addAttribute("searchMessage", "Search results for name: " + search);
+                }
+                model.addAttribute("search", search);
+                model.addAttribute("searchType", searchType);
             } else {
-                customers = customerService.searchByName(search);
-                model.addAttribute("searchMessage", "Search results for name: " + search);
+                customers = customerService.getActiveCustomers();
             }
-            model.addAttribute("search", search);
-            model.addAttribute("searchType", searchType);
-        } else {
-            customers = customerService.getActiveCustomers();
+
+            model.addAttribute("customers", customers);
+            model.addAttribute("totalCustomers", customerService.getCustomerCount());
+            model.addAttribute("activeCustomers", customerService.getActiveCustomerCount());
+
+            return "customers/list";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load customer data: " + e.getMessage());
+            return "error";
         }
-
-        model.addAttribute("customers", customers);
-        model.addAttribute("totalCustomers", customerService.getCustomerCount());
-        model.addAttribute("activeCustomers", customerService.getActiveCustomerCount());
-
-        return "customers/list";
     }
 
     /**

@@ -35,21 +35,38 @@ public class FinanceController {
      * Displays finance overview for all weddings.
      */
     @GetMapping
-    public String financeOverview(Model model) throws IOException {
-        List<com.wedora.dto.WeddingDTO> weddings = weddingService.getAllWeddings();
-        
-        for (com.wedora.dto.WeddingDTO wedding : weddings) {
-            BigDecimal totalExpenses = financeService.getTotalExpenses(wedding.getId());
-            BigDecimal totalBookings = financeService.getTotalBookings(wedding.getId());
-            BigDecimal remainingBudget = financeService.getRemainingBudget(wedding.getId());
+    public String financeOverview(Model model) {
+        try {
+            List<com.wedora.dto.WeddingDTO> weddings = weddingService.getAllWeddings();
             
-            wedding.setTotalExpenses(totalExpenses);
-            wedding.setTotalBookings(totalBookings);
-            wedding.setRemainingBudget(remainingBudget);
+            BigDecimal totalBookingsSum = BigDecimal.ZERO;
+            BigDecimal totalExpensesSum = BigDecimal.ZERO;
+            BigDecimal remainingBudgetSum = BigDecimal.ZERO;
+            
+            for (com.wedora.dto.WeddingDTO wedding : weddings) {
+                BigDecimal totalExpenses = financeService.getTotalExpenses(wedding.getId());
+                BigDecimal totalBookings = financeService.getTotalBookings(wedding.getId());
+                BigDecimal remainingBudget = financeService.getRemainingBudget(wedding.getId());
+                
+                wedding.setTotalExpenses(totalExpenses);
+                wedding.setTotalBookings(totalBookings);
+                wedding.setRemainingBudget(remainingBudget);
+                
+                totalBookingsSum = totalBookingsSum.add(totalBookings != null ? totalBookings : BigDecimal.ZERO);
+                totalExpensesSum = totalExpensesSum.add(totalExpenses != null ? totalExpenses : BigDecimal.ZERO);
+                remainingBudgetSum = remainingBudgetSum.add(remainingBudget != null ? remainingBudget : BigDecimal.ZERO);
+            }
+            
+            model.addAttribute("weddings", weddings);
+            model.addAttribute("totalBookingsSum", totalBookingsSum);
+            model.addAttribute("totalExpensesSum", totalExpensesSum);
+            model.addAttribute("remainingBudgetSum", remainingBudgetSum);
+            
+            return "finance/overview";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load finance data: " + e.getMessage());
+            return "error";
         }
-        
-        model.addAttribute("weddings", weddings);
-        return "finance/overview";
     }
 
     /**

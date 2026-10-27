@@ -67,32 +67,40 @@ public class PageController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) throws IOException {
-        // Fetch real statistics
-        long totalCustomers = customerService.getCustomerCount();
-        long activeCustomers = customerService.getActiveCustomerCount();
-        long totalVendors = vendorService.getVendorCount();
-        long activeVendors = vendorService.getActiveVendorCount();
-        long totalWeddings = weddingService.getWeddingCount();
-        long upcomingWeddings = weddingService.getUpcomingWeddingCount();
-        long totalBookings = bookingService.getBookingCount();
-        long activeBookings = bookingService.getActiveBookingCount();
-        long overdueTasks = taskService.getOverdueTasks().size();
+    public String dashboard(Model model) {
+        try {
+            // Fetch real statistics
+            long totalCustomers = customerService.getCustomerCount();
+            long activeCustomers = customerService.getActiveCustomerCount();
+            long totalVendors = vendorService.getVendorCount();
+            long activeVendors = vendorService.getActiveVendorCount();
+            long totalWeddings = weddingService.getWeddingCount();
+            long upcomingWeddings = weddingService.getUpcomingWeddingCount();
+            long totalBookings = bookingService.getBookingCount();
+            long activeBookings = bookingService.getActiveBookingCount();
+            long overdueTasks = taskService.getOverdueTasks().size();
 
-        model.addAttribute("totalCustomers", totalCustomers);
-        model.addAttribute("activeCustomers", activeCustomers);
-        model.addAttribute("totalVendors", totalVendors);
-        model.addAttribute("activeVendors", activeVendors);
-        model.addAttribute("totalWeddings", totalWeddings);
-        model.addAttribute("upcomingWeddings", upcomingWeddings);
-        model.addAttribute("totalBookings", totalBookings);
-        model.addAttribute("activeBookings", activeBookings);
-        model.addAttribute("overdueTasks", overdueTasks);
+            model.addAttribute("totalCustomers", totalCustomers);
+            model.addAttribute("activeCustomers", activeCustomers);
+            model.addAttribute("totalVendors", totalVendors);
+            model.addAttribute("activeVendors", activeVendors);
+            model.addAttribute("totalWeddings", totalWeddings);
+            model.addAttribute("upcomingWeddings", upcomingWeddings);
+            model.addAttribute("totalBookings", totalBookings);
+            model.addAttribute("activeBookings", activeBookings);
+            model.addAttribute("overdueTasks", overdueTasks);
 
-        // Fetch recent activities
-        model.addAttribute("recentWeddings", weddingService.getUpcomingWeddings().subList(0, Math.min(5, weddingService.getUpcomingWeddings().size())));
-        model.addAttribute("recentTasks", taskService.getOverdueTasks().subList(0, Math.min(5, taskService.getOverdueTasks().size())));
+            // Fetch recent activities - handle empty lists safely
+            List<WeddingDTO> upcomingList = weddingService.getUpcomingWeddings();
+            List<TaskDTO> overdueList = taskService.getOverdueTasks();
+            
+            model.addAttribute("recentWeddings", upcomingList.isEmpty() ? List.of() : upcomingList.subList(0, Math.min(5, upcomingList.size())));
+            model.addAttribute("recentTasks", overdueList.isEmpty() ? List.of() : overdueList.subList(0, Math.min(5, overdueList.size())));
 
-        return "dashboard";
+            return "dashboard";
+        } catch (IOException e) {
+            model.addAttribute("error", "Unable to load dashboard data: " + e.getMessage());
+            return "error";
+        }
     }
 }
