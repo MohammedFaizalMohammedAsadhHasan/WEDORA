@@ -86,8 +86,8 @@ public class WeddingRepository {
     public List<Wedding> searchByName(String searchTerm) throws IOException {
         String lowerTerm = searchTerm.toLowerCase();
         return findAll().stream()
-                .filter(w -> w.getBrideName().toLowerCase().contains(lowerTerm) ||
-                             w.getGroomName().toLowerCase().contains(lowerTerm))
+                .filter(w -> (w.getBrideName() != null && w.getBrideName().toLowerCase().contains(lowerTerm)) ||
+                             (w.getGroomName() != null && w.getGroomName().toLowerCase().contains(lowerTerm)))
                 .collect(Collectors.toList());
     }
 

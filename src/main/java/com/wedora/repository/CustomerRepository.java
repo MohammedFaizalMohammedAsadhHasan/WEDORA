@@ -70,7 +70,7 @@ public class CustomerRepository {
     public List<Customer> searchByName(String searchTerm) throws IOException {
         String lowerTerm = searchTerm.toLowerCase();
         return findAll().stream()
-                .filter(c -> c.getFullName().toLowerCase().contains(lowerTerm))
+                .filter(c -> c.getFullName() != null && c.getFullName().toLowerCase().contains(lowerTerm))
                 .collect(Collectors.toList());
     }
 

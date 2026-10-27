@@ -65,7 +65,7 @@ public class VendorRepository {
      */
     public List<Vendor> findByCategory(String category) throws IOException {
         return findAll().stream()
-                .filter(v -> v.getCategory().equalsIgnoreCase(category))
+                .filter(v -> v.getCategory() != null && v.getCategory().equalsIgnoreCase(category))
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +75,7 @@ public class VendorRepository {
     public List<Vendor> searchByName(String searchTerm) throws IOException {
         String lowerTerm = searchTerm.toLowerCase();
         return findAll().stream()
-                .filter(v -> v.getName().toLowerCase().contains(lowerTerm))
+                .filter(v -> v.getName() != null && v.getName().toLowerCase().contains(lowerTerm))
                 .collect(Collectors.toList());
     }
 

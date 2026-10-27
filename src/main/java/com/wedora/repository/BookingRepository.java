@@ -57,7 +57,7 @@ public class BookingRepository {
      */
     public List<Booking> findByWeddingId(String weddingId) throws IOException {
         return findAll().stream()
-                .filter(b -> b.getWeddingId().equals(weddingId))
+                .filter(b -> b.getWeddingId() != null && b.getWeddingId().equals(weddingId))
                 .collect(Collectors.toList());
     }
 
@@ -66,7 +66,7 @@ public class BookingRepository {
      */
     public List<Booking> findByVendorId(String vendorId) throws IOException {
         return findAll().stream()
-                .filter(b -> b.getVendorId().equals(vendorId))
+                .filter(b -> b.getVendorId() != null && b.getVendorId().equals(vendorId))
                 .collect(Collectors.toList());
     }
 
