@@ -30,6 +30,7 @@ public class WeddingService {
     public List<WeddingDTO> getAllWeddings() throws IOException {
         List<Wedding> weddings = weddingRepository.findAll();
         return weddings.stream()
+                .filter(w -> w != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

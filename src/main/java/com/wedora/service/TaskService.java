@@ -27,6 +27,7 @@ public class TaskService {
     public List<TaskDTO> getAllTasks() throws IOException {
         List<Task> tasks = taskRepository.findAll();
         return tasks.stream()
+                .filter(t -> t != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -34,6 +35,7 @@ public class TaskService {
     public List<TaskDTO> getTasksByWeddingId(String weddingId) throws IOException {
         List<Task> tasks = taskRepository.findByWeddingId(weddingId);
         return tasks.stream()
+                .filter(t -> t != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -41,6 +43,7 @@ public class TaskService {
     public List<TaskDTO> getOverdueTasks() throws IOException {
         List<Task> tasks = taskRepository.findOverdue();
         return tasks.stream()
+                .filter(t -> t != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

@@ -32,6 +32,7 @@ public class BookingService {
     public List<BookingDTO> getAllBookings() throws IOException {
         List<Booking> bookings = bookingRepository.findAll();
         return bookings.stream()
+                .filter(b -> b != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

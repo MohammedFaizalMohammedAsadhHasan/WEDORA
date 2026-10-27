@@ -27,6 +27,7 @@ public class StaffService {
     public List<StaffDTO> getAllStaff() throws IOException {
         List<Staff> staffList = staffRepository.findAll();
         return staffList.stream()
+                .filter(s -> s != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -34,6 +35,7 @@ public class StaffService {
     public List<StaffDTO> getActiveStaff() throws IOException {
         List<Staff> staffList = staffRepository.findActive();
         return staffList.stream()
+                .filter(s -> s != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }

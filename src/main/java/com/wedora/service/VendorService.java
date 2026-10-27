@@ -30,6 +30,7 @@ public class VendorService {
     public List<VendorDTO> getAllVendors() throws IOException {
         List<Vendor> vendors = vendorRepository.findAll();
         return vendors.stream()
+                .filter(v -> v != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -40,6 +41,7 @@ public class VendorService {
     public List<VendorDTO> getActiveVendors() throws IOException {
         List<Vendor> vendors = vendorRepository.findActive();
         return vendors.stream()
+                .filter(v -> v != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
