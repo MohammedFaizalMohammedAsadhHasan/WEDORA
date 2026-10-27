@@ -32,6 +32,7 @@ public class CustomerService {
     public List<CustomerDTO> getAllCustomers() throws IOException {
         List<Customer> customers = customerRepository.findAll();
         return customers.stream()
+                .filter(c -> c != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -42,6 +43,7 @@ public class CustomerService {
     public List<CustomerDTO> getActiveCustomers() throws IOException {
         List<Customer> customers = customerRepository.findActive();
         return customers.stream()
+                .filter(c -> c != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -61,6 +63,7 @@ public class CustomerService {
     public List<CustomerDTO> searchByName(String searchTerm) throws IOException {
         List<Customer> customers = customerRepository.searchByName(searchTerm);
         return customers.stream()
+                .filter(c -> c != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -71,6 +74,7 @@ public class CustomerService {
     public List<CustomerDTO> searchByContact(String searchTerm) throws IOException {
         List<Customer> customers = customerRepository.searchByContact(searchTerm);
         return customers.stream()
+                .filter(c -> c != null)
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
