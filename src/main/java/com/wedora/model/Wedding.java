@@ -126,7 +126,7 @@ public class Wedding extends BaseEntity {
      * Checks if wedding is upcoming (date is in future and not cancelled)
      */
     public boolean isUpcoming() {
-        return weddingDate.isAfter(LocalDate.now()) && status != WeddingStatus.CANCELLED;
+        return weddingDate != null && weddingDate.isAfter(LocalDate.now()) && status != WeddingStatus.CANCELLED;
     }
 
     /**

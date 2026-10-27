@@ -67,7 +67,7 @@ public class WeddingRepository {
      */
     public List<Wedding> findUpcoming() throws IOException {
         return findAll().stream()
-                .filter(Wedding::isUpcoming)
+                .filter(w -> w.getWeddingDate() != null && w.isUpcoming())
                 .collect(Collectors.toList());
     }
 
