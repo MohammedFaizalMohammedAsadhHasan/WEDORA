@@ -140,7 +140,12 @@ public class WeddingService {
      * Converts DTO to Entity.
      */
     private Wedding toEntity(WeddingDTO dto) {
-        Wedding wedding = new Wedding(dto.getId());
+        Wedding wedding;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            wedding = new Wedding(dto.getId().trim());
+        } else {
+            wedding = new Wedding();
+        }
         wedding.setCustomerId(dto.getCustomerId());
         wedding.setBrideName(dto.getBrideName());
         wedding.setGroomName(dto.getGroomName());

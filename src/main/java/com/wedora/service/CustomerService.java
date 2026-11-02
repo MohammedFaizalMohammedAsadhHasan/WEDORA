@@ -156,7 +156,12 @@ public class CustomerService {
      * Converts DTO to Entity.
      */
     private Customer toEntity(CustomerDTO dto) {
-        Customer customer = new Customer(dto.getId());
+        Customer customer;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            customer = new Customer(dto.getId().trim());
+        } else {
+            customer = new Customer();
+        }
         customer.setFullName(dto.getFullName());
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());

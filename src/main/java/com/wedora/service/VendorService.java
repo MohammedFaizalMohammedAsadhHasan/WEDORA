@@ -132,7 +132,12 @@ public class VendorService {
      * Converts DTO to Entity.
      */
     private Vendor toEntity(VendorDTO dto) {
-        Vendor vendor = new Vendor(dto.getId());
+        Vendor vendor;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            vendor = new Vendor(dto.getId().trim());
+        } else {
+            vendor = new Vendor();
+        }
         vendor.setName(dto.getName());
         vendor.setCategory(dto.getCategory());
         vendor.setContactPerson(dto.getContactPerson());

@@ -90,7 +90,12 @@ public class TaskService {
     }
 
     private Task toEntity(TaskDTO dto) {
-        Task task = new Task(dto.getId());
+        Task task;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            task = new Task(dto.getId().trim());
+        } else {
+            task = new Task();
+        }
         task.setWeddingId(dto.getWeddingId());
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());

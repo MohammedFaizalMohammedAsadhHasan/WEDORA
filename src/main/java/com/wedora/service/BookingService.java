@@ -196,7 +196,12 @@ public class BookingService {
      * Converts DTO to Entity.
      */
     private Booking toEntity(BookingDTO dto) {
-        Booking booking = new Booking(dto.getId());
+        Booking booking;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            booking = new Booking(dto.getId().trim());
+        } else {
+            booking = new Booking();
+        }
         booking.setWeddingId(dto.getWeddingId());
         booking.setVendorId(dto.getVendorId());
         booking.setBookingDateTime(dto.getBookingDateTime());

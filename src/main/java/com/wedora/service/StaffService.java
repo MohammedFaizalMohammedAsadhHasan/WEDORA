@@ -84,7 +84,12 @@ public class StaffService {
     }
 
     private Staff toEntity(StaffDTO dto) {
-        Staff staff = new Staff(dto.getId());
+        Staff staff;
+        if (dto.getId() != null && !dto.getId().trim().isEmpty()) {
+            staff = new Staff(dto.getId().trim());
+        } else {
+            staff = new Staff();
+        }
         staff.setFirstName(dto.getFirstName());
         staff.setLastName(dto.getLastName());
         staff.setEmail(dto.getEmail());
